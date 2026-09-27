@@ -281,3 +281,5 @@ Choose a permissive license (e.g., MIT or Apache-2.0) and add it to the repo.
 ### Final notes
 
 This setup is intentionally small and explicit. If you later outgrow JSONL or need deep protocol-level data (WebSocket frames, bodies at scale, HAR diffs), Playwright’s native **trace/HAR** features integrate cleanly with the same MCP server.
+
+Repository: [JovaniPink/mcp-network-capture](https://github.com/JovaniPink/mcp-network-capture). Local checkout: `mcp-network-capture`.
