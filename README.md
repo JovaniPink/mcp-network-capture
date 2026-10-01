@@ -3,26 +3,26 @@
 ## Playwright MCP + Filesystem MCP + Python Client
 
 Capture real browser network requests (URLs, methods, status, headers, optional bodies/traces) and save them locally as **newline-delimited JSON (JSONL)**.
-This repo wires **Playwright MCP** (browser automation) with a **Filesystem MCP** (safe writes) and a **small headless Python client**.
+This prototype connects a browser MCP server, a filesystem MCP server, and a Python client. Interoperability with the standard Playwright and filesystem server contracts remains unverified; [issue #14](https://github.com/JovaniPink/mcp-network-capture/issues/14) tracks the blocking work. Unit tests exercise mocked tool responses, not a completed browser capture or filesystem containment.
 
 ---
 
 ## Why this exists
 
-* You needed **reliable network capture** from a real browser session.
+* The intended use is network capture from a real browser session.
 * `browser-use` doesn’t expose network capture as a first-class tool; Playwright MCP does.
-* This solution is **minimal**, **scriptable**, and **production-ready**: navigate → wait correctly → fetch network logs → persist JSONL.
+* The intended sequence is navigation, waiting, request retrieval, and JSONL persistence. Production readiness is not established.
 
 ---
 
 ## What you get
 
 * ✅ **Headless CLI** (`capture_network.py`) – automate captures without a chat UI
-* ✅ **Semantic waits** (`networkidle`) with fallback to timed sleep
+* **Wait handling** attempts `networkidle` and falls back to timed sleep; the standard server parameter contract needs qualification.
 * ✅ **Retries** with exponential backoff for flaky pages/tools
 * ✅ **Client-side filters** (URL regex, method, status range)
 * ✅ **Structured logging** with env overrides
-* ✅ **Safe local writes** via a Filesystem MCP server
+* **Filesystem writes** depend on the selected server, its path restrictions, and verified tool results; containment is not established by these tests.
 * 🧩 Optional: **Interactive** agent flow with an Ollama MCP client (for ad-hoc sessions)
 
 ---
@@ -67,7 +67,7 @@ pip install -r requirements.txt
 
 ---
 
-## Quick start
+## Proposed integration (qualification pending)
 
 ### 1) Start the Playwright MCP server (SSE)
 
@@ -92,7 +92,7 @@ npx @agent-infra/mcp-server-filesystem@latest \
   --allowed-directories "$HOME/mcp_captures"
 ```
 
-> Any maintained Filesystem MCP works as long as it exposes `write_file` (and, optionally, `create_directory`).
+> Select and pin an exact server version only after verifying its tool schemas, transport, allowed paths, and error behavior. The floating `@latest` examples below are historical integration examples, not a reproducible validated setup.
 
 ### 3) Run the capture
 
@@ -274,7 +274,7 @@ ollmcp --servers-json ./servers.json --model qwen2.5:7b
 
 ## License
 
-Choose a permissive license (e.g., MIT or Apache-2.0) and add it to the repo.
+The repository includes an [MIT License](LICENSE). This does not grant rights to captured content or third-party server packages.
 
 ---
 
